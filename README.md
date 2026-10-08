@@ -2,7 +2,11 @@
 
 Free completed-hour spot research for people following BTC, ETH and SOL during London hours. It adds volume and range comparisons against the same UTC hour on the previous seven days. Reader demand remains untested.
 
-Start with **START_HERE.md**. Double-click **refresh.cmd** on Windows or run `python agent.py` on Python 3.11+. No third-party packages.
+**[Read the live brief](https://novapixelgb.github.io/session-brief/)** · **[Subscribe via Atom](https://novapixelgb.github.io/session-brief/feed.xml)** · **[Give feedback](https://github.com/NovaPixelGB/session-brief/issues/new?template=reader-feedback.yml)**
+
+Public launch verified on 8 October 2026. The live page refreshes automatically every six hours at minute 17 UTC through standard GitHub Actions runners. No local computer or model API is needed. A daily Codex follow-up checks failures and reader feedback using the owner's existing allowance; it does not buy any services.
+
+To run locally: `python agent.py` then `python make_feed.py`, using Python 3.11+. No third-party packages. Windows users can use `py -3` instead of `python`.
 
 ## Outputs
 
@@ -22,10 +26,10 @@ Incomplete hours are excluded. Stale, gapped or invalid data is rejected. Partia
 
 ## Verification and deployment
 
-`python -m unittest -v` checks calculations, unfinished candles, gaps/staleness, invalid numbers, zero baselines, partial coverage and total failure. The manual Actions workflow tests and uploads an artifact, without committing or publishing. A separate deployment example needs deliberate activation.
+`python -m unittest -v` checks calculations, unfinished candles, gaps/staleness, invalid numbers, zero baselines, partial coverage and total failure. `.github/workflows/pages.yml` tests, generates the brief and feed, and publishes `site/` on source pushes, manual runs and a six-hour schedule. It does not commit output back into source. Schedules can be delayed and may be disabled after 60 days of repository inactivity.
 
-Review [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits) before future business hosting. Uploading this folder alone does not activate a public site or a recurring service; the earlier instruction overstated this.
+This is a free informational research demo. Review [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits) before future business hosting. There is no checkout or commercial SaaS. Standard hosted runners in public repositories are [free under GitHub's current policy](https://docs.github.com/en/actions/concepts/billing-and-usage).
 
-`legacy_snapshot.py`, `LEGACY_README.md` and old snapshot reports remain for reference. Old reports mislabeled USDT as USD; use Session Brief for current research.
+Local legacy snapshots are retained for reference, separate from the public source upload. Those old reports mislabeled USDT as USD; use Session Brief for current research.
 
-The pipeline is deterministic research automation, without ongoing AI calls. No users, demand or revenue have been established.
+The data pipeline is deterministic research automation, without ongoing AI calls. Readers can subscribe through the Atom feed and respond through a public GitHub issue form. Publishing and repository topics make the product accessible but do not establish demand. No users or revenue have been established; distribution beyond GitHub needs a relevant authorised channel.

@@ -1,0 +1,23 @@
+name: Reader feedback
+description: Tell us what helped and what is missing from Session Brief.
+title: '[Feedback] '
+body:
+  - type: textarea
+    id: useful
+    attributes:
+      label: Which metric helped?
+      description: For example, relative volume or hourly range.
+    validations:
+      required: true
+  - type: textarea
+    id: missing
+    attributes:
+      label: What was missing?
+  - type: dropdown
+    id: return
+    attributes:
+      label: Would you read another brief?
+      options:
+        - 'Yes'
+        - 'Maybe'
+        - 'No'

@@ -1,0 +1,7 @@
+{
+  "symbols": ["BTCUSDT", "ETHUSDT", "SOLUSDT"],
+  "mode": "research_only",
+  "allow_public_posting": false,
+  "allow_wallet_access": false,
+  "allow_paid_services": false
+}

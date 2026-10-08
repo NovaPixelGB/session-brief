@@ -121,10 +121,10 @@ def findings(rows):
     if not eligible:
         return ["Volume comparison unavailable: baseline volume is zero."]
     leader = max(eligible, key=lambda r: r["volume_ratio"])
-    return [f"{leader['symbol']} has the highest relative hourly volume in this basket: "
-            f"{multiplier(leader['volume_ratio'])} the median for the same UTC hour on the previous seven days.",
-            f"{sum(r['volume_ratio'] >= 1.5 for r in eligible)} of {len(eligible)} available pairs meet the "
-            "1.50× volume flag. The threshold is an editorial filter, not a statistically tested signal."]
+    return [f"{leader['symbol']} volume was {multiplier(leader['volume_ratio'])} its seven-day same-hour median, "
+            "the highest relative volume among the available pairs.",
+            f"{sum(r['volume_ratio'] >= 1.5 for r in eligible)} of {len(eligible)} pairs crossed the "
+            "1.50× volume threshold."]
 
 def markdown(report):
     lines = ["# Session Brief", "", "Closed-hour spot research for people following major crypto pairs during London hours.", "",
@@ -160,12 +160,16 @@ def render_site(report):
     cards, trs, baselines = [], [], []
     for r in report["assets"]:
         direction = "positive" if r["change_1h"] >= 0 else "negative"
-        cards.append(f'<article class="card"><div class="pair">{esc(r["symbol"])}</div><h2>{r["close"]:,.2f} <small>USDT</small></h2>'
-                     f'<p class="{direction}">{r["change_1h"]:+.2f}% last closed hour</p>'
-                     f'{sparkline(r["closes"])}<p class="muted">24 hourly closes · independent scale</p></article>')
+        ticker = r["symbol"].removesuffix("USDT")
+        name = {"BTC": "Bitcoin", "ETH": "Ethereum", "SOL": "Solana"}.get(ticker, "Spot")
+        cards.append(f'<article class="card"><div class="instrument"><h2>{esc(ticker)}</h2><span>{esc(name)}</span></div>'
+                     f'<p class="price">{r["close"]:,.2f} <small>USDT</small></p>'
+                     f'<p class="return"><span class="{direction}">{r["change_1h"]:+.2f}%</span><span>last closed hour</span></p>'
+                     f'{sparkline(r["closes"])}<p class="chart-caption">24h closes · own scale</p></article>')
         flag = "Elevated volume" if r["volume_ratio"] is not None and r["volume_ratio"] >= 1.5 else "Below flag" if r["volume_ratio"] is not None else "No baseline"
         trs.append(f'<tr><th scope="row">{esc(r["symbol"])}</th><td>{r["change_24h"]:+.2f}%</td><td>{r["range_1h"]:.2f}%</td>'
-                   f'<td>{multiplier(r["range_ratio"])}</td><td>{multiplier(r["volume_ratio"])}</td><td>{flag}</td></tr>')
+                   f'<td>{multiplier(r["range_ratio"])}</td><td>{multiplier(r["volume_ratio"])}</td>'
+                   f'<td class="volume-flag{ " elevated" if flag == "Elevated volume" else ""}">{flag}</td></tr>')
         baselines.append(f'<tr><th scope="row">{esc(r["symbol"])}</th><td>{r["volume_1h"]:,.0f}</td>'
                          f'<td>{r["volume_baseline"]:,.0f}</td><td>{r["range_1h"]:.2f}%</td>'
                          f'<td>{r["range_baseline"]:.2f}%</td></tr>')

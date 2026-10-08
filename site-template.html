@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark light">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('session-brief-theme')==='light'?'light':'dark';}catch{document.documentElement.dataset.theme='dark';}</script>
 <meta name="description" content="BTC, ETH and SOL: completed-hour returns, volume and range against a seven-day same-hour baseline. Free, sourced crypto research.">
 <link rel="canonical" href="https://novapixelgb.github.io/session-brief/">
 <meta property="og:title" content="Session Brief — a crypto market note">
@@ -14,7 +16,10 @@
 <link rel="alternate" type="application/atom+xml" title="Session Brief updates" href="feed.xml">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23a43b29'/%3E%3Ctext x='7' y='25' font-family='Georgia' font-size='25' fill='%23f5f2e9'%3ES%3C/text%3E%3C/svg%3E">
 <style>
-:root{color-scheme:light;--paper:#f5f2e9;--ink:#262823;--muted:#686b60;--rule:#cccbbf;--accent:#a43b29;--green:#35614b;--mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace;--serif:Georgia,"Times New Roman",serif}
+:root{color-scheme:dark;--paper:#1b1d1b;--ink:#e8e6dc;--muted:#a9ada2;--rule:#42463f;--accent:#dc8c74;--green:#9fc4ac;--notice:#292b25;--mono:"SFMono-Regular",Consolas,"Liberation Mono",monospace;--serif:Georgia,"Times New Roman",serif}
+:root[data-theme="light"]{color-scheme:light;--paper:#f5f2e9;--ink:#262823;--muted:#686b60;--rule:#cccbbf;--accent:#a43b29;--green:#35614b;--notice:#ece7dc}
+.theme-toggle{border:0;padding:0;background:transparent;color:var(--ink);font:inherit;text-transform:inherit;letter-spacing:inherit}.theme-toggle:hover{color:var(--accent)}.notice{background:var(--notice)!important}
+@media print{:root,:root[data-theme="light"]{color-scheme:light;--paper:#fff;--ink:#262823;--muted:#686b60;--rule:#cccbbf;--accent:#a43b29;--green:#35614b;--notice:#ece7dc}}
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}main{max-width:1180px;margin:auto;padding:0 38px}a{color:inherit;text-underline-offset:4px;text-decoration-thickness:1px}a:hover{color:var(--accent)}button,input,textarea{font:inherit}button{cursor:pointer}a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
 .topline{display:flex;justify-content:space-between;gap:16px;border-top:5px solid var(--accent);border-bottom:1px solid var(--rule);padding:13px 0;font:11px/1.5 var(--mono);text-transform:uppercase;letter-spacing:.7px}.topline nav{display:flex;gap:24px}.topline a{text-decoration:none}.masthead{display:flex;justify-content:space-between;align-items:flex-end;padding:26px 0 30px;border-bottom:2px solid var(--ink);gap:30px}.masthead h1{font:normal clamp(48px,7.6vw,92px)/.95 var(--serif);letter-spacing:-4px;margin:0}.masthead p{max-width:205px;margin:0 0 2px;font:italic 17px/1.45 var(--serif);color:var(--muted)}
 .dateline{display:flex;justify-content:space-between;gap:18px;padding:15px 0;border-bottom:1px solid var(--rule);font:11px/1.5 var(--mono)}.dateline strong{font-weight:400}.dateline .overdue{color:var(--accent)}.intro{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:22px 0 12px}.intro p{margin:0;max-width:620px;color:var(--muted);font-size:14px}.coverage{white-space:nowrap;font:11px var(--mono);color:var(--muted)}
@@ -32,7 +37,7 @@ footer{display:flex;justify-content:space-between;gap:32px;border-top:2px solid 
 <body>
 <a class="skip" href="#markets">Skip to market data</a>
 <main>
-<div class="topline"><span>Crypto market research</span><nav aria-label="Main navigation"><a href="#method">Method</a><a href="#follow">Subscribe</a><a href="https://github.com/NovaPixelGB/session-brief">Source ↗</a></nav></div>
+<div class="topline"><span>Crypto market research</span><nav aria-label="Main navigation"><a href="#method">Method</a><a href="#follow">Subscribe</a><button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to light mode">Light mode</button></nav></div>
 <header class="masthead"><h1>Session Brief<span style="color:var(--accent)">.</span></h1><p>A short record of price,<br>volume and range.</p></header>
 <div class="dateline"><strong>Hour ending {{HOUR}}</strong><span id="age">Saved snapshot</span></div>
 <div class="intro"><p>BTC, ETH and SOL spot markets. The last completed hour, compared with the same UTC hour over the previous seven days.</p><span class="coverage">{{COVERAGE}} pairs available</span></div>
@@ -58,6 +63,9 @@ footer{display:flex;justify-content:space-between;gap:32px;border-top:2px solid 
 <footer><p class="footer-brand">Session Brief.</p><p>Binance spot · USDT quotes · Historical research<br>No forecasts or trade recommendations. This is a saved edition; reload for the latest published data.</p><a href="#markets">Back to markets ↑</a></footer>
 </main>
 <script>
+const themeButton=document.getElementById('theme-toggle');
+function themeLabel(){const light=document.documentElement.dataset.theme==='light';themeButton.textContent=light?'Dark mode':'Light mode';themeButton.setAttribute('aria-label',light?'Switch to dark mode':'Switch to light mode');}
+themeLabel();themeButton.addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='light'?'dark':'light';document.documentElement.dataset.theme=theme;try{localStorage.setItem('session-brief-theme',theme);}catch{}themeLabel();});
 const end=new Date('{{CUTOFF}}');
 function updateAge(){const hours=Math.max(0,Math.floor((Date.now()-end.getTime())/3600000));const age=document.getElementById('age');age.textContent=hours>=8?`Snapshot ${hours} hours old · update may be delayed`:`Snapshot ${hours}h old · six-hour updates`;age.classList.toggle('overdue',hours>=8);}
 updateAge();setInterval(updateAge,60000);

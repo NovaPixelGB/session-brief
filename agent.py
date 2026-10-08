@@ -157,7 +157,7 @@ def sparkline(closes):
 
 def render_site(report):
     esc = html.escape
-    cards, trs = [], []
+    cards, trs, baselines = [], [], []
     for r in report["assets"]:
         direction = "positive" if r["change_1h"] >= 0 else "negative"
         cards.append(f'<article class="card"><div class="pair">{esc(r["symbol"])}</div><h2>{r["close"]:,.2f} <small>USDT</small></h2>'
@@ -166,13 +166,20 @@ def render_site(report):
         flag = "Elevated volume" if r["volume_ratio"] is not None and r["volume_ratio"] >= 1.5 else "Below flag" if r["volume_ratio"] is not None else "No baseline"
         trs.append(f'<tr><th scope="row">{esc(r["symbol"])}</th><td>{r["change_24h"]:+.2f}%</td><td>{r["range_1h"]:.2f}%</td>'
                    f'<td>{multiplier(r["range_ratio"])}</td><td>{multiplier(r["volume_ratio"])}</td><td>{flag}</td></tr>')
+        baselines.append(f'<tr><th scope="row">{esc(r["symbol"])}</th><td>{r["volume_1h"]:,.0f}</td>'
+                         f'<td>{r["volume_baseline"]:,.0f}</td><td>{r["range_1h"]:.2f}%</td>'
+                         f'<td>{r["range_baseline"]:.2f}%</td></tr>')
     errors = "".join(f"<li>{esc(s)}: unavailable ({esc(e)})</li>" for s, e in report["errors"].items())
     sources = "".join(f'<li><a href="{esc(r["source_url"], quote=True)}">{esc(r["symbol"])} exact request</a></li>' for r in report["assets"])
     template = (ROOT / "site-template.html").read_text(encoding="utf-8")
     fields = {"HOUR": esc(report["london_hour"]), "GENERATED": esc(report["generated_at"]), "CUTOFF": esc(report["hour_end"]),
               "CARDS": "".join(cards), "ROWS": "".join(trs), "FINDINGS": "".join(f"<li>{esc(x)}</li>" for x in findings(report["assets"])),
               "ERRORS": f'<aside class="notice">Partial coverage<ul>{errors}</ul></aside>' if errors else "",
-              "COVERAGE": f'{len(report["assets"])}/{len(report["symbols"])}', "SOURCES": sources}
+              "COVERAGE": f'{len(report["assets"])}/{len(report["symbols"])}', "SOURCES": sources,
+              "BASELINES": "".join(baselines), "SHARE_TEXT": esc("Session Brief — hour ending " + report["london_hour"] + "\n" +
+                  "\n".join(findings(report["assets"])) + "\nBinance spot only; historical research. " +
+                  f"Coverage: {len(report['assets'])}/{len(report['symbols'])}.\n" +
+                  "https://novapixelgb.github.io/session-brief/\nThe link shows the latest published brief, which may change.")}
     for key, value in fields.items():
         template = template.replace("{{" + key + "}}", value)
     return template

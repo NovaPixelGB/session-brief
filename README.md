@@ -11,6 +11,7 @@ To run locally: `python agent.py` then `python make_feed.py`, using Python 3.11+
 ## Outputs
 
 - `site/index.html`: responsive snapshot, 24-hour sparklines, downloads, freshness indicator and feedback-copy tool.
+- Readers can copy a dated summary and the Atom feed address. Expand the baseline table to inspect absolute volume and range behind each ratio. The age label warns of a possible delay at eight hours, allowing for the six-hour schedule.
 - `site/latest.md`, `site/latest.json`, `site/source-data.json`: brief, calculated metrics and archived exchange responses.
 - `outbox/sample-brief.md` and `outbox/first-users.md`: sample and drafted reader experiment.
 - `reports/session-brief-*.md` and `state/raw-*.json`: dated research and source archives.
